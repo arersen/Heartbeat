@@ -52,7 +52,7 @@ int client_connect(SOCKET sock) {
         return -1;
     }
 #endif
-    send(sock, "Hello World", strlen("Hello World"), 0);
+    //send(sock, "Hello World", strlen("Hello World"), 0);
     return 0;
 }
 

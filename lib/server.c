@@ -58,6 +58,7 @@ server_init() {
     }
 
     listen(sockfd, 0x7fffffff);
+
     return sockfd;
 }
 
@@ -82,6 +83,8 @@ void server_poll(int sock)
 {
 
     SOCKET client = accept(sock, NULL, NULL);
+    int timeout_ms = 10000;
+    setsockopt(client, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout_ms, sizeof(timeout_ms));
     if(client == INVALID_SOCKET) {
         printf("accept error\n"); return;
     } else printf("accept success\n");
