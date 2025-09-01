@@ -12,5 +12,6 @@
 #include <stdio.h>
 
 #include "server.h"
+#include "client.h"
 
 #endif //HEARTBEAT_HEARTBEAT_H

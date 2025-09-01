@@ -4,5 +4,16 @@
 #include "lib/heartbeat.h"
 
 int main() {
-    client_connect();
+    SOCKET sock = client_init();
+
+    if (client_connect(sock)) {
+        perror("connect");
+        return 1;
+    }
+    client_receive(sock);
+    client_close(sock);
+
+    getchar();
+
+    return 0;
 }

@@ -84,7 +84,7 @@ void server_poll(int sock)
     SOCKET client = accept(sock, NULL, NULL);
     if(client == INVALID_SOCKET) {
         printf("accept error\n"); return;
-    }
+    } else printf("accept success\n");
 
     char buf[1024];
     int n = recv(client, buf, sizeof(buf)-1, 0);

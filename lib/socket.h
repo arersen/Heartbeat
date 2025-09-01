@@ -5,6 +5,7 @@
 #ifndef HEARTBEAT_SOCKET_H
 #define HEARTBEAT_SOCKET_H
 
+#include <stdio.h>
 
 #ifdef _WIN32
 #include <winsock2.h>

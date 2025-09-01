@@ -11,5 +11,7 @@ int main(void) {
     server_poll(sock);
 
     close_server(sock);
+
+    getchar();
     return 0;
 }
