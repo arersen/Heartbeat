@@ -52,6 +52,43 @@ server_init() {
     }
 
     listen(sockfd, 0x7fffffff);
-    return 0;
+    return sockfd;
 }
+
+#ifdef _WIN32
+void close_server(SOCKET sock)
+#else
+void close_server(int socket)
+#endif
+{
+#ifdef _WIN32
+    closesocket(sock);
+#else
+    close(sock);
+#endif
+}
+
+#ifdef _WIN32
+void server_poll(SOCKET sock)
+#else
+void server_poll(int sock)
+#endif
+{
+
+    SOCKET client = accept(sock, NULL, NULL);
+    if(client == INVALID_SOCKET) {
+        printf("accept error\n"); return;
+    }
+
+    char buf[1024];
+    int n = recv(client, buf, sizeof(buf)-1, 0);
+    if(n > 0) {
+        buf[n] = '\0';
+        printf("Received: %s\n", buf);
+        send(client, "Connected!", 18, 0);
+    }
+
+    closesocket(client);
+}
+
 

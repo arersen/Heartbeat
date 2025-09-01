@@ -15,8 +15,7 @@ add_custom_target(all_targets ALL
 )
 
 if(WIN32)
-    target_link_libraries(server PRIVATE ws2_32)
-    target_link_libraries(client PRIVATE ws2_32)
+    target_link_libraries(heartbeat PRIVATE ws2_32)
 endif()
 
 target_link_libraries(server PRIVATE heartbeat)
