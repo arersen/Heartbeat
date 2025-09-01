@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "heartbeat.h"
+#include "lib/heartbeat.h"
 
 int main(void) {
 #ifdef _WIN32

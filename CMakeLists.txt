@@ -4,7 +4,8 @@ project(Heartbeat C)
 set(CMAKE_C_STANDARD 11)
 
 
-add_library(heartbeat SHARED heartbeat.c)
+add_library(heartbeat SHARED lib/heartbeat.c lib/client.c lib/server.c
+        lib/heartbeat.h lib/socket.h)
 
 
 add_executable(server server.c)

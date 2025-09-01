@@ -1,4 +1,10 @@
 //
+// Created by waflek on 02.09.2025.
+//
+
+#include "server.h"
+
+//
 // Created by waflek on 01.09.2025.
 //
 
@@ -90,5 +96,7 @@ void server_poll(int sock)
 
     closesocket(client);
 }
+
+
 
 

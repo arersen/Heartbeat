@@ -1,8 +1,8 @@
 //
 // Created by waflek on 02.09.2025.
 //
-#include "heartbeat.h"
+#include "lib/heartbeat.h"
 
 int main() {
-    test();
+    client_connect();
 }
