@@ -65,6 +65,9 @@ void client_close(SOCKET sock) {
 #endif
 }
 
+void client_send(SOCKET sock, const char* data, uint16_t size) {
+    send(sock, data, size, 0);
+}
 void client_receive(SOCKET sock) {
     char buf[1024];
 #ifdef _WIN32

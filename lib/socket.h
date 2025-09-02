@@ -18,6 +18,6 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #endif
-
+#include <stdint.h>
 
 #endif //HEARTBEAT_SOCKET_H
