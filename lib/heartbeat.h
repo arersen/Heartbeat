@@ -11,7 +11,7 @@
 #include "client.h"
 #include "server.h"
 #include <pthread.h>
-
+#include "telegram/telegram.h"
 void heartbeat(SOCKET sock);
 void listen_heartbeat(SOCKET sock);
 SOCKET heartbeat_init();
@@ -24,4 +24,6 @@ typedef struct {
 
 void* heartbeat_accept_thread(void* args);
 void* heartbeat_listen_thread(void* args);
+
+
 #endif //HEARTBEAT_HEARTBEAT_H

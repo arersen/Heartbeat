@@ -6,6 +6,8 @@ int main(void) {
     Client clients[100];
     SOCKET server = heartbeat_init();
 
+    char token[256] = {0};
+
     struct Args{
         SOCKET sock; Client *clients; uint16_t* clients_count;
     } *args = (struct Args*)malloc(sizeof(struct Args));
@@ -19,7 +21,6 @@ int main(void) {
         pthread_join(clients[i].thread, NULL);
     }
     pthread_join(thread, NULL);
-
 
     getchar();
 }
