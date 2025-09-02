@@ -10,44 +10,56 @@ SOCKET heartbeat_init() {
     return sock;
 }
 
-void heartbeat_accept_thread(SOCKET sock, Client *clients, uint16_t* clients_count) {
+void* heartbeat_accept_thread(void* args) {
+    struct Args{
+        SOCKET sock; Client *clients; uint16_t* clients_count;
+    } *_args = (struct Args*)args;
+    SOCKET sock = _args->sock;
+    Client *clients = _args->clients;
+    uint16_t* clients_count = _args->clients_count;
 
-    SOCKET client = accept(sock, NULL, NULL);
-    if (client == INVALID_SOCKET) {
-        perror("invalid socket");
-        return;
+    for (;;) {
+        SOCKET client = accept(sock, NULL, NULL);
+        if (client == INVALID_SOCKET) {
+            perror("invalid socket");
+            return NULL;
+        }
+
+        uuid_t uuid;
+        int n = recv(client, (char*)&uuid, sizeof(uuid), 0);
+        if (n <= 0) {
+            perror("recv");
+            return NULL;
+        }
+
+        RPC_CSTR str;
+        UuidToStringA(&uuid, &str);
+        printf("Connected client with UUID: %s\n", str);
+
+        clients[*clients_count].sock = client;
+        clients[*clients_count].uuid = uuid;
+
+        struct Args {
+            Client *client;
+            Client *clients;
+            uint16_t* clients_count;
+        } *args = (struct Args*)malloc(sizeof(struct Args));
+
+        args->client = &clients[*clients_count];
+        args->clients = clients;
+        args->clients_count = clients_count;
+
+
+        if (pthread_create(&clients[*clients_count].thread, NULL, heartbeat_listen_thread, args) != 0) {
+            perror("pthread_create");
+            return;
+        }
+        (*clients_count)++;
+
     }
 
-    uuid_t uuid;
-    int n = recv(client, (char*)&uuid, sizeof(uuid), 0);
-    if (n <= 0) {
-        perror("recv");
-        return;
-    }
-
-    RPC_CSTR str;
-    UuidToStringA(&uuid, &str);
-    printf("Connected client with UUID: %s\n", str);
-
-    clients[*clients_count].sock = client;
-    clients[*clients_count].uuid = uuid;
-
-    struct Args {
-        Client *client;
-        Client *clients;
-        uint16_t* clients_count;
-    } *args = (struct Args*)malloc(sizeof(struct Args));
-
-    args->client = &clients[*clients_count];
-    args->clients = clients;
-    args->clients_count = clients_count;
-
-
-    if (pthread_create(&clients[*clients_count].thread, NULL, heartbeat_listen_thread, args) != 0) {
-        perror("pthread_create");
-        return;
-    }
-    (*clients_count)++;
+    free(args);
+    return NULL;
 
 }
 void* heartbeat_listen_thread(void* args) {
@@ -68,7 +80,7 @@ void* heartbeat_listen_thread(void* args) {
     for (;;) {
         int n = recv(client->sock, buffer, sizeof(buffer), 0);
         if (n > 0) {
-            printf("Received: %s", buffer);
+            printf("Received: %s from: %d\n", buffer, *clients_count);
         } else {
             uint8_t reconnected = 0;
             for (int i = 0; i < *clients_count; i++) {

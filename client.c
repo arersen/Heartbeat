@@ -17,6 +17,10 @@ int main() {
     UuidToStringA(&uuid, &str);
     printf("Created UUID: %s\n", str);
     client_send(sock, (const char*)&uuid, sizeof(uuid));
+
+    for (;;Sleep(1000)) {
+        heartbeat(sock);
+    }
     getchar();
     client_close(sock);
 
