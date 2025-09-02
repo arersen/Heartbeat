@@ -6,6 +6,10 @@ int main(void) {
     Client clients[100];
     SOCKET server = heartbeat_init();
     heartbeat_accept_thread(server, clients, &clients_count);
-    heartbeat_listen_thread(&clients[0], clients, &clients_count);
+
+    for (int i = 0; i < clients_count; i++) {
+        pthread_join(clients[i].thread, NULL);
+    }
+
     getchar();
 }

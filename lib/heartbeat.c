@@ -1,7 +1,7 @@
 #include "heartbeat.h"
 
 
-void heartbeat(SOCKET sock) {
+void heartbeat(SOCKET sock){
     client_send(sock, "BEAT", sizeof("BEAT"));
 }
 
@@ -31,10 +31,36 @@ void heartbeat_accept_thread(SOCKET sock, Client *clients, uint16_t* clients_cou
 
     clients[*clients_count].sock = client;
     clients[*clients_count].uuid = uuid;
+
+    struct Args {
+        Client *client;
+        Client *clients;
+        uint16_t* clients_count;
+    } *args = (struct Args*)malloc(sizeof(struct Args));
+
+    args->client = &clients[*clients_count];
+    args->clients = clients;
+    args->clients_count = clients_count;
+
+
+    if (pthread_create(&clients[*clients_count].thread, NULL, heartbeat_listen_thread, args) != 0) {
+        perror("pthread_create");
+        return;
+    }
     (*clients_count)++;
 
 }
-void heartbeat_listen_thread(Client* client, Client* clients, uint16_t* clients_count) {
+void* heartbeat_listen_thread(void* args) {
+    Sleep(100);
+    const struct Args {
+        Client *client;
+        Client *clients;
+        uint16_t* clients_count;
+    } *_args = (struct Args*)args;
+    Client* client = _args->client;
+    Client* clients = _args->clients;
+    uint16_t* clients_count = _args->clients_count;
+
     int timeout_ms = 10000;
     setsockopt(client->sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout_ms, sizeof(timeout_ms));
 
@@ -52,14 +78,15 @@ void heartbeat_listen_thread(Client* client, Client* clients, uint16_t* clients_
             }
             if (reconnected < 2) {
                 printf("Connection lost.\n");
-                return;
+                return NULL;
             } else {
                 printf("Reconnected from other IP.\n");
             }
         }
 
     }
-
+    free(args);
+    return NULL;
 }
 
 
