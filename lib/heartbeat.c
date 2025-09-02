@@ -108,6 +108,9 @@ void* heartbeat_listen_thread(void* args) {
             }
             if (reconnected < 2) {
                 printf("Connection lost.\n");
+                char token[256] = {0};
+                get_token(token);
+                telegram_send_message(token, "763411878", "Connection lost");
                 return NULL;
             } else {
                 printf("Reconnected from other IP.\n");
