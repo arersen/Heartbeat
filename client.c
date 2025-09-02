@@ -13,11 +13,14 @@ int main() {
 
     uuid_t uuid;
     UuidCreate(&uuid);
+    RPC_CSTR str;
+    UuidToStringA(&uuid, &str);
+    printf("Created UUID: %s\n", str);
     client_send(sock, (const char*)&uuid, sizeof(uuid));
-    client_receive(sock);
+    getchar();
     client_close(sock);
 
-    getchar();
+
 
     return 0;
 }

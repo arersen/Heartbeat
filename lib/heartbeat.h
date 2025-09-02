@@ -22,5 +22,5 @@ typedef struct {
 } Client;
 
 void heartbeat_accept_thread(SOCKET sock, Client *clients, uint16_t* clients_count);
-void hearbeat_listen_thread(Client* client);
+void heartbeat_listen_thread(Client* client, Client* clients, uint16_t* clients_count);
 #endif //HEARTBEAT_HEARTBEAT_H

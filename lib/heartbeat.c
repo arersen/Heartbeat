@@ -34,16 +34,32 @@ void heartbeat_accept_thread(SOCKET sock, Client *clients, uint16_t* clients_cou
     (*clients_count)++;
 
 }
-void hearbeat_listen_thread(Client* client) {
+void heartbeat_listen_thread(Client* client, Client* clients, uint16_t* clients_count) {
     int timeout_ms = 10000;
     setsockopt(client->sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout_ms, sizeof(timeout_ms));
+
+    unsigned char buffer[1024] = {0};
     for (;;) {
-        unsigned char buffer[1024] = {0};
         int n = recv(client->sock, buffer, sizeof(buffer), 0);
         if (n > 0) {
             printf("Received: %s", buffer);
+        } else {
+            uint8_t reconnected = 0;
+            for (int i = 0; i < *clients_count; i++) {
+                if (memcmp(&client->uuid, &clients[0].uuid, sizeof(UUID)) == 0) {
+                    reconnected++;
+                }
+            }
+            if (reconnected < 2) {
+                printf("Connection lost.\n");
+                return;
+            } else {
+                printf("Reconnected from other IP.\n");
+            }
         }
+
     }
+
 }
 
 
