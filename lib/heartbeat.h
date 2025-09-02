@@ -5,14 +5,12 @@
 #ifndef HEARTBEAT_HEARTBEAT_H
 #define HEARTBEAT_HEARTBEAT_H
 #include <stdio.h>
-#include <sys/types.h>
-#include <uuids.h>
-
+#include <rpc.h>
 #include <string.h>
 #include <stdio.h>
-
-#include "server.h"
 #include "client.h"
+#include "server.h"
+
 
 void heartbeat(SOCKET sock);
 void listen_heartbeat(SOCKET sock);
@@ -24,4 +22,5 @@ typedef struct {
 } Client;
 
 void heartbeat_accept_thread(SOCKET sock, Client *clients, uint16_t* clients_count);
+void hearbeat_listen_thread(Client* client);
 #endif //HEARTBEAT_HEARTBEAT_H

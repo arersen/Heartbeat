@@ -6,4 +6,6 @@ int main(void) {
     Client clients[100];
     SOCKET server = heartbeat_init();
     heartbeat_accept_thread(server, clients, &clients_count);
+    hearbeat_listen_thread(clients->sock);
+    getchar();
 }

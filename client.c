@@ -10,6 +10,10 @@ int main() {
         perror("connect");
         return 1;
     }
+
+    uuid_t uuid;
+    UuidCreate(&uuid);
+    client_send(sock, (const char*)&uuid, sizeof(uuid));
     client_receive(sock);
     client_close(sock);
 

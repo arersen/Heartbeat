@@ -19,7 +19,7 @@ void heartbeat_accept_thread(SOCKET sock, Client *clients, uint16_t* clients_cou
     }
 
     uuid_t uuid;
-    int n = recv(client, &uuid, sizeof(uuid), 0);
+    int n = recv(client, (char*)&uuid, sizeof(uuid), 0);
     if (n <= 0) {
         perror("recv");
         return;
@@ -35,10 +35,14 @@ void heartbeat_accept_thread(SOCKET sock, Client *clients, uint16_t* clients_cou
 
 }
 void hearbeat_listen_thread(Client* client) {
-    unsigned char buffer[1024] = {0};
-    int n = recv(client->sock, buffer, sizeof(buffer), 0);
-    if (n > 0) {
-        printf("Received: %s", buffer);
+    int timeout_ms = 10000;
+    setsockopt(client->sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout_ms, sizeof(timeout_ms));
+    for (;;) {
+        unsigned char buffer[1024] = {0};
+        int n = recv(client->sock, buffer, sizeof(buffer), 0);
+        if (n > 0) {
+            printf("Received: %s", buffer);
+        }
     }
 }
 

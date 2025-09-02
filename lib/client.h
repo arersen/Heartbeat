@@ -11,5 +11,5 @@ SOCKET client_init();
 int client_connect(SOCKET sock);
 void client_close(SOCKET sock);
 void client_receive(SOCKET sock);
-void client_send(SOCKET sock, uint8_t* data, uint16_t size);
+void client_send(SOCKET sock, const char* data, uint16_t size);
 #endif //HEARTBEAT_CLIENT_H
