@@ -21,6 +21,6 @@ int main(void) {
         pthread_join(clients[i].thread, NULL);
     }
     pthread_join(thread, NULL);
-
+    close_server(server);
     getchar();
 }

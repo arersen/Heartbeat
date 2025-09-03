@@ -31,7 +31,7 @@ SOCKETTYPE client_init() {
 int client_connect(SOCKETTYPE sock, const char* ip, int port) {
     struct sockaddr_in server_addr;
     server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(10001);
+    server_addr.sin_port = htons(port);
 
 #ifdef _WIN32
     inet_pton(AF_INET, ip, &server_addr.sin_addr);
