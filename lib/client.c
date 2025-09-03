@@ -28,15 +28,15 @@ SOCKETTYPE client_init() {
     return sock;
 }
 
-int client_connect(SOCKETTYPE sock) {
+int client_connect(SOCKETTYPE sock, const char* ip, int port) {
     struct sockaddr_in server_addr;
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(10001);
 
 #ifdef _WIN32
-    inet_pton(AF_INET, "127.0.0.1", &server_addr.sin_addr);
+    inet_pton(AF_INET, ip, &server_addr.sin_addr);
 #else
-    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    server_addr.sin_addr.s_addr = inet_addr(ip);
 #endif
 #ifdef _WIN32
     if (connect(sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) == SOCKET_ERROR) {

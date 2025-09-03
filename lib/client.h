@@ -14,7 +14,7 @@
 #define SOCKETTYPE int
 #endif
 SOCKETTYPE client_init();
-int client_connect(SOCKETTYPE sock);
+int client_connect(SOCKETTYPE sock, const char* ip, int port);
 void client_close(SOCKETTYPE sock);
 void client_receive(SOCKETTYPE sock);
 void client_send(SOCKETTYPE sock, const char* data, uint16_t size);

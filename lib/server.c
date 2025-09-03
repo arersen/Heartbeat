@@ -75,17 +75,18 @@ void close_server(int socket)
 #endif
 }
 
-#ifdef _WIN32
-void server_poll(SOCKET sock)
-#else
-void server_poll(int sock)
-#endif
+
+void server_poll(SOCKETTYPE sock)
 {
 
-    SOCKET client = accept(sock, NULL, NULL);
+    SOCKETTYPE client = accept(sock, NULL, NULL);
     int timeout_ms = 10000;
     setsockopt(client, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout_ms, sizeof(timeout_ms));
+#ifdef _WIN32
     if(client == INVALID_SOCKET) {
+#else
+    if (client < 0){
+#endif
         printf("accept error\n"); return;
     } else printf("accept success\n");
 
@@ -96,8 +97,11 @@ void server_poll(int sock)
         printf("Received: %s\n", buf);
         send(client, "Connected!", 18, 0);
     }
-
+#ifdef _WIN32
     closesocket(client);
+#else
+    close(client);
+#endif
 }
 
 

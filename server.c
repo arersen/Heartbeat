@@ -4,12 +4,12 @@
 int main(void) {
     uint16_t clients_count = 0;
     Client clients[100];
-    SOCKET server = heartbeat_init();
+    SOCKETTYPE server = heartbeat_init();
 
     char token[256] = {0};
 
     struct Args{
-        SOCKET sock; Client *clients; uint16_t* clients_count;
+        SOCKETTYPE sock; Client *clients; uint16_t* clients_count;
     } *args = (struct Args*)malloc(sizeof(struct Args));
     args->sock = server;
     args->clients = clients;
