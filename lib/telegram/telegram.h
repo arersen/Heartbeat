@@ -12,7 +12,7 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#include <winhttp.h>\
+#include <winhttp.h>
 #else
 #include <curl/curl.h>
 #endif

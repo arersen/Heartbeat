@@ -63,7 +63,7 @@ server_init() {
 }
 
 #ifdef _WIN32
-void close_server(SOCKET sock)
+void close_server(SOCKET socket)
 #else
 void close_server(int socket)
 #endif
