@@ -1,12 +1,12 @@
 #include "heartbeat.h"
 
 
-void heartbeat(SOCKET sock){
+void heartbeat(SOCKETTYPE sock){
     client_send(sock, "BEAT", sizeof("BEAT"));
 }
 
-SOCKET heartbeat_init() {
-    SOCKET sock = server_init();
+SOCKETTYPE heartbeat_init() {
+    SOCKETTYPE sock = server_init();
     return sock;
 }
 
@@ -22,15 +22,19 @@ uint8_t check_token() {
 
 void* heartbeat_accept_thread(void* args) {
     struct Args{
-        SOCKET sock; Client *clients; uint16_t* clients_count;
+        SOCKETTYPE sock; Client *clients; uint16_t* clients_count;
     } *_args = (struct Args*)args;
-    SOCKET sock = _args->sock;
+    SOCKETTYPE sock = _args->sock;
     Client *clients = _args->clients;
     uint16_t* clients_count = _args->clients_count;
 
     for (;;) {
-        SOCKET client = accept(sock, NULL, NULL);
+        SOCKETTYPE client = accept(sock, NULL, NULL);
+#ifdef _WIN32
         if (client == INVALID_SOCKET) {
+#else
+        if (client < 0){
+#endif
             perror("invalid socket");
             return NULL;
         }
@@ -42,8 +46,13 @@ void* heartbeat_accept_thread(void* args) {
             return NULL;
         }
 
+#ifdef _WIN32
         RPC_CSTR str;
         UuidToStringA(&uuid, &str);
+#else
+        char str[37];
+        uuid_unparse(uuid, str);
+#endif
         printf("Connected client with UUID: %s\n", str);
 
         if (check_token()) {
@@ -55,7 +64,11 @@ void* heartbeat_accept_thread(void* args) {
             printf("Warning: u dont link telegram bot.\n");
         }
         clients[*clients_count].sock = client;
+#ifdef _WIN32
         clients[*clients_count].uuid = uuid;
+#else
+        memcpy(&clients[*clients_count].uuid, &uuid, sizeof(uuid));
+#endif
 
         struct Args {
             Client *client;
@@ -70,7 +83,7 @@ void* heartbeat_accept_thread(void* args) {
 
         if (pthread_create(&clients[*clients_count].thread, NULL, heartbeat_listen_thread, args) != 0) {
             perror("pthread_create");
-            return;
+            return NULL;
         }
         (*clients_count)++;
 
@@ -81,7 +94,11 @@ void* heartbeat_accept_thread(void* args) {
 
 }
 void* heartbeat_listen_thread(void* args) {
+#ifdef _WIN32
     Sleep(100);
+#else
+    usleep(1001000);
+#endif
     const struct Args {
         Client *client;
         Client *clients;
@@ -102,7 +119,7 @@ void* heartbeat_listen_thread(void* args) {
         } else {
             uint8_t reconnected = 0;
             for (int i = 0; i < *clients_count; i++) {
-                if (memcmp(&client->uuid, &clients[0].uuid, sizeof(UUID)) == 0) {
+                if (memcmp(&client->uuid, &clients[0].uuid, sizeof(uuid_t)) == 0) {
                     reconnected++;
                 }
             }

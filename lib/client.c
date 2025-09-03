@@ -4,7 +4,7 @@
 
 #include "client.h"
 
-SOCKET client_init() {
+SOCKETTYPE client_init() {
 #ifdef _WIN32
     WSADATA wsa;
     if (WSAStartup(MAKEWORD(2,2), &wsa) != 0) {
@@ -28,7 +28,7 @@ SOCKET client_init() {
     return sock;
 }
 
-int client_connect(SOCKET sock) {
+int client_connect(SOCKETTYPE sock) {
     struct sockaddr_in server_addr;
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(10001);
@@ -56,7 +56,7 @@ int client_connect(SOCKET sock) {
     return 0;
 }
 
-void client_close(SOCKET sock) {
+void client_close(SOCKETTYPE sock) {
 #ifdef _WIN32
     closesocket(sock);
     WSACleanup();
@@ -65,10 +65,10 @@ void client_close(SOCKET sock) {
 #endif
 }
 
-void client_send(SOCKET sock, const char* data, uint16_t size) {
+void client_send(SOCKETTYPE sock, const char* data, uint16_t size) {
     send(sock, data, size, 0);
 }
-void client_receive(SOCKET sock) {
+void client_receive(SOCKETTYPE sock) {
     char buf[1024];
 #ifdef _WIN32
     int n = recv(sock, buf, sizeof(buf)-1, 0);

@@ -5,12 +5,20 @@
 #ifndef TELEGRAM_H
 #define TELEGRAM_H
 
-#include <windows.h>
-#include <winhttp.h>
+
 #include <stdio.h>
 #include <stdint.h>
 #include <wchar.h>
-uint8_t write_token(char* token);
-uint8_t get_token(char* token);
+
+#ifdef _WIN32
+#include <windows.h>
+#include <winhttp.h>\
+#else
+#include <curl/curl.h>
+#endif
+
+
+int write_token(char* token);
+int get_token(char* token);
 int telegram_send_message(char* token, char* chat_id, char* message);
 #endif //TELEGRAM_H

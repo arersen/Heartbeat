@@ -5,20 +5,29 @@
 #ifndef HEARTBEAT_HEARTBEAT_H
 #define HEARTBEAT_HEARTBEAT_H
 #include <stdio.h>
+
+#ifdef _WIN32
 #include <rpc.h>
+#define SOCKETTYPE SOCKET
+#else
+#include <malloc.h>
+#include <uuid/uuid.h>
+#define SOCKETTYPE int
+#endif
+
 #include <string.h>
 #include <stdio.h>
 #include "client.h"
 #include "server.h"
 #include <pthread.h>
 #include "telegram/telegram.h"
-void heartbeat(SOCKET sock);
-void listen_heartbeat(SOCKET sock);
-SOCKET heartbeat_init();
+void heartbeat(SOCKETTYPE sock);
+void listen_heartbeat(SOCKETTYPE sock);
+SOCKETTYPE heartbeat_init();
 
 typedef struct {
     uuid_t uuid;
-    SOCKET sock;
+    SOCKETTYPE sock;
     pthread_t thread;
 } Client;
 

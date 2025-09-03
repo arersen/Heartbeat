@@ -4,22 +4,26 @@
 
 #include "telegram.h"
 
-uint8_t write_token(char* token) {
+int write_token(char* token) {
     FILE* fp = fopen("token.txt", "w");
     if (!fp) {
         return 0;
     }
     fputs(token, fp);
     fclose(fp);
+    return 0;
 }
 
-uint8_t get_token(char* token) {
+int get_token(char* token) {
     FILE* fp = fopen("token.txt", "r");
     if (!fp) {
         return 0;
     }
     fgets(token, 256, fp);
+    return 0;
+
 }
+#ifdef _WIN32
 int telegram_send_message(char* token, char* chat_id, char* message) {
     wchar_t query[1024] = {0};
     swprintf(query, sizeof(query) / sizeof(query[0]), L"/bot%s/sendMessage?chat_id=%s&text=%s", token, chat_id, message);
@@ -62,3 +66,8 @@ int telegram_send_message(char* token, char* chat_id, char* message) {
     return 0;
 
 }
+#else
+int telegram_send_message(char* token, char* chat_id, char* message) {
+
+}
+#endif

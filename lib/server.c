@@ -69,9 +69,9 @@ void close_server(int socket)
 #endif
 {
 #ifdef _WIN32
-    closesocket(sock);
+    closesocket(socket);
 #else
-    close(sock);
+    close(socket);
 #endif
 }
 
