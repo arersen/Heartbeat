@@ -23,8 +23,9 @@ int get_token(char* token) {
     return 0;
 
 }
-#ifdef _WIN32
+
 int telegram_send_message(char* token, char* chat_id, char* message) {
+#ifdef _WIN32
     wchar_t query[1024] = {0};
     swprintf(query, sizeof(query) / sizeof(query[0]), L"/bot%s/sendMessage?chat_id=%s&text=%s", token, chat_id, message);
     HINTERNET hSession = WinHttpOpen(L"MyApp/1.0",
@@ -32,12 +33,12 @@ int telegram_send_message(char* token, char* chat_id, char* message) {
                                      WINHTTP_NO_PROXY_NAME,
                                      WINHTTP_NO_PROXY_BYPASS, 0);
 
-    if (!hSession) return 1;
+    if (!hSession) return FAILED;
 
     HINTERNET hConnect = WinHttpConnect(hSession,
                                       L"api.telegram.org",
                                       INTERNET_DEFAULT_HTTPS_PORT, 0);
-    if (!hConnect) return 1;
+    if (!hConnect) return FAILED;
 
     HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET",
                                             query,
@@ -45,7 +46,7 @@ int telegram_send_message(char* token, char* chat_id, char* message) {
                                             WINHTTP_DEFAULT_ACCEPT_TYPES,
                                             WINHTTP_FLAG_SECURE);
 
-    if (!hRequest) return 1;
+    if (!hRequest) return FAILED;
 
     BOOL bResults = WinHttpSendRequest(hRequest,
                                        WINHTTP_NO_ADDITIONAL_HEADERS, 0,
@@ -62,12 +63,41 @@ int telegram_send_message(char* token, char* chat_id, char* message) {
     WinHttpCloseHandle(hRequest);
     WinHttpCloseHandle(hConnect);
     WinHttpCloseHandle(hSession);
-
-    return 0;
-
-}
 #else
-int telegram_send_message(char* token, char* chat_id, char* message) {
+    CURL *curl;
+    CURLcode res;
+
+    char url[1024];
+    snprintf(url, sizeof(url),
+             "https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s",
+             token, chat_id, message);
+
+    curl_global_init(CURL_GLOBAL_DEFAULT);
+    curl = curl_easy_init();
+
+    if (curl) {
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+
+
+        res = curl_easy_perform(curl);
+
+        if (res != CURLE_OK)
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        else
+            printf("Message sent!\n");
+
+        curl_easy_cleanup(curl);
+    } else {
+        fprintf(stderr, "Failed to initialize curl\n");
+        return FAILED;
+    }
+
+    curl_global_cleanup();
+#endif
+
+    return OK;
 
 }
-#endif

@@ -17,7 +17,10 @@
 #include <curl/curl.h>
 #endif
 
-
+enum  {
+    OK,
+    FAILED
+};
 int write_token(char* token);
 int get_token(char* token);
 int telegram_send_message(char* token, char* chat_id, char* message);

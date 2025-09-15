@@ -23,8 +23,23 @@ if(WIN32)
     target_link_libraries(client PRIVATE ws2_32 Rpcrt4)
     target_link_libraries(heartbeat PRIVATE winhttp)
 else ()
+    find_package(CURL REQUIRED)
     find_library(UUID_LIB uuid REQUIRED)
-    target_link_libraries(heartbeat ${UUID_LIB})
+
+    target_link_libraries(heartbeat
+            PRIVATE
+            CURL::libcurl
+            ${UUID_LIB}
+    )
+
+    target_link_libraries(client
+            PRIVATE
+            CURL::libcurl
+            ${UUID_LIB}
+    )
+
+
+
 endif()
 
 target_link_libraries(server PRIVATE heartbeat)
