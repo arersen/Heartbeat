@@ -17,8 +17,8 @@
 
 #include <string.h>
 #include <stdio.h>
-#include "client.h"
-#include "server.h"
+#include "tcp/client.h"
+#include "tcp/server.h"
 #include <pthread.h>
 #include "telegram/telegram.h"
 void heartbeat(SOCKETTYPE sock);

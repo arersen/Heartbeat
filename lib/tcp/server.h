@@ -5,7 +5,7 @@
 #ifndef HEARTBEAT_SERVER_H
 #define HEARTBEAT_SERVER_H
 
-#include "socket.h"
+#include "../socket.h"
 
 #ifdef _WIN32
 SOCKET

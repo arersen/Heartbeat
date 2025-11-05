@@ -4,10 +4,14 @@ project(Heartbeat C)
 set(CMAKE_C_STANDARD 11)
 
 
-add_library(heartbeat SHARED lib/heartbeat.c lib/client.c lib/server.c
+add_library(heartbeat SHARED lib/heartbeat.c lib/tcp/client.c lib/tcp/server.c
+        lib/tcp/server.h lib/tcp/client.h
         lib/heartbeat.h lib/socket.h
         lib/telegram/telegram.c
-        lib/telegram/telegram.h)
+        lib/telegram/telegram.h
+        lib/icmp/ping.c
+        lib/icmp/ping.h)
+
 
 
 add_executable(server server.c)
